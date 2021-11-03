@@ -1,0 +1,111 @@
+<div class="container">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <form class="formproducto wrapper" id="formproducto" method="post" onsubmit="nuevoProducto(); return false;">
+                <div class="formproducto__row">
+                    <div class="formproducto__field">
+                        <label for="title">Titulo</label>
+                    </div>
+                    <div class="formproducto__field">
+                        <input id="title" type="text" name="title" placeholder="Título del producto.." required>
+                    </div>
+                </div>
+                <div class="formproducto__row">
+                    <div class="formproducto__field">
+                        <label for="price">Precio</label>
+                    </div>
+                    <div class="formproducto__field">
+                        <input id="price" type="number" name="price" placeholder="Precio del producto.." required>
+                    </div>
+                </div>
+                <div class="formproducto__row">
+                    <div class="formproducto__field">
+                        <label for="thumbnail">URL de imagen</label>
+                    </div>
+                    <div class="formproducto__field">
+                        <input id="thumbnail" type="text" name="thumbnail" placeholder="Imagen del producto.." required>
+                    </div>
+                </div>
+                <div class="formproducto__row">
+                    <div class="formproducto__field">
+                        <span class="formproducto__span" id="formproducto__span-successful">¡Producto agregado correctamente!</span>
+                        <span class="formproducto__span" id="formproducto__span-failed">No se pudo agregar el producto. Intente nuevamente.</span>
+                    </div>
+                </div>
+                <div class="formproducto__row">
+                    <div class="formproducto__field">
+                        <input type="submit" value="Enviar">
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-12 mb-4">
+            <div class="wrapper tablaproductos__wrapper">
+            </div>
+        </div>
+        <div class="col-12 mb-4">
+            <form class="formchat wrapper" id="formchat" onsubmit="return envioMensaje(this)">
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="email">Email</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="email" type="email" name="email" placeholder="Ingrese email..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="nombre">Nombre</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="nombre" type="text" name="nombre" placeholder="Ingrese su nombre..." required>
+                    </div>
+                    <div class="formchat__field">
+                        <label for="apellido">Apellido</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="apellido" type="text" name="apellido" placeholder="Ingrese su apellido..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="edad">Edad</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="edad" type="number" name="edad" placeholder="Ingrese su edad..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="alias">Alias</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="alias" type="text" name="alias" placeholder="Ingrese su alias..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="avatar">Avatar</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="avatar" type="url" name="avatar" placeholder="Ingrese su avatar..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <label for="mensaje">Mensaje</label>
+                    </div>
+                    <div class="formchat__field">
+                        <input id="mensaje" type="text" name="mensaje" placeholder="Ingrese su mensaje..." required>
+                    </div>
+                </div>
+                <div class="formchat__row">
+                    <div class="formchat__field">
+                        <input type="submit" value="Enviar">
+                    </div>
+                </div>
+            </form>
+            <div id="chat__container" class="chat__container wrapper"></div>
+        </div>
+    </div>
+</div>

@@ -7,6 +7,7 @@ let { ProductoModelo } = require('./models/productos');
 let { MensajeModelo } = require('./models/mensajes');
 const generador = require('./generador/productos');
 const {normalize, schema} = require('normalizr');
+const util = require('util'); 
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -49,10 +50,101 @@ mongoose.connection.on("connected", (err, res) => {
   console.log("mongoose está conectado")
 });
 
-const autoresSchema = new schema.Entity('autores');
+const authorSchema = new schema.Entity('author',{},{idAttribute: 'id'});
 const mensajesSchema = new schema.Entity('mensajes',{
-    autores: autoresSchema
-});
+    author: authorSchema
+},{idAttribute: '_id'});
+
+function print(obj) {
+    console.log(util.inspect(obj, false, 12, true));
+}
+
+const mongoArray = [
+    {
+      author: {
+        id: 'paviottilucas@gmail.com',
+        nombre: 'Lucas',
+        apellido: 'Paviotti',
+        edad: 27,
+        alias: 'Luke',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181c3741dd346d9d05baceb",
+      date: '2021-11-02T23:02:12.000Z',
+      text: 'hola 1',
+      __v: 0
+    },
+    {
+      author: {
+        id: 'paviottilucas@gmail.com',
+        nombre: 'Lucas',
+        apellido: 'Paviotti',
+        edad: 27,
+        alias: 'Luke',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181c3751dd346d9d05bacee",
+      date: '2021-11-02T23:02:13.000Z',
+      text: 'hola 2',
+      __v: 0
+    },
+    {
+      author: {
+        id: 'paviottilucas@gmail.com',
+        nombre: 'Lucas',
+        apellido: 'Paviotti',
+        edad: 27,
+        alias: 'Luke',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181c3a51dd346d9d05bacf1",
+      date: '2021-11-02T23:03:01.000Z',
+      text: 'hola 3',
+      __v: 0
+    },
+    {
+      author: {
+        id: 'paviottilucas@gmail.com',
+        nombre: 'Lucas',
+        apellido: 'Paviotti',
+        edad: 27,
+        alias: 'Luke',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181c3a61dd346d9d05bacf4",
+      date: '2021-11-02T23:03:02.000Z',
+      text: 'hola 4',
+      __v: 0
+    },
+    {
+      author: {
+        id: 'marian@gmail.com',
+        nombre: 'Mariano',
+        apellido: 'Mariano',
+        edad: 27,
+        alias: 'Marian',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181cf6b87aebabd04f07288",
+      date: '2021-11-02T23:53:15.000Z',
+      text: '123',
+      __v: 0
+    },
+    {
+      author: {
+        id: 'marian@gmail.com',
+        nombre: 'Mariano',
+        apellido: 'Mariano',
+        edad: 27,
+        alias: 'Marian',
+        avatar: 'https://segredosdomundo.r7.com/wp-content/uploads/2020/09/doutor-destino-quem-e-historia-e-curiosidades-do-vilao-da-marvel-4.jpg'
+      },
+      _id: "6181cfae53b1f56995e3970d",
+      date: '2021-11-02T23:54:22.000Z',
+      text: '1234',
+      __v: 0
+    }
+  ]
 
 routerApi.get('/productos/listar', async (req, res) => {
     try {
@@ -212,9 +304,30 @@ io.on("connection", async (socket) => {
 
     try {
         let mensajes = await MensajeModelo.find({});
-        const normalizedData = normalize(mensajes, mensajesSchema);
-        console.log(mensajes, normalizedData);
-        socket.emit('nuevoMensaje', mensajes);
+        const parsedMessages = mensajes.map((m) => {
+            return {
+                author: {
+                    id: m.author.id,
+                    nombre: m.author.nombre,
+                    apellido: m.author.apellido,
+                    edad: m.author.edad,
+                    alias: m.author.alias,
+                    avatar: m.author.avatar
+                },
+                _id: m._id.toString(),
+                date: m.date,
+                text: m.text
+            };
+        });
+
+        const normalizedData = normalize(parsedMessages, [mensajesSchema]);
+        
+        const longAntes = JSON.stringify(mensajes).length;
+        const longDespues = JSON.stringify(normalizedData).length;
+
+        const compresion = Math.round((longAntes - longDespues) /  longAntes * 100);
+
+        socket.emit('nuevoMensaje', {normalizedData, compresion});
     }
     catch(e) {
         throw `No se pudieron enviar los mensajes a traves de websocket: ${e}`;
@@ -244,7 +357,30 @@ io.on("connection", async (socket) => {
         }
         finally {
             let mensajes = await MensajeModelo.find({});
-            socket.emit('nuevoMensaje', mensajes);
+            const parsedMessages = mensajes.map((m) => {
+                return {
+                    author: {
+                        id: m.author.id,
+                        nombre: m.author.nombre,
+                        apellido: m.author.apellido,
+                        edad: m.author.edad,
+                        alias: m.author.alias,
+                        avatar: m.author.avatar
+                    },
+                    _id: m._id.toString(),
+                    date: m.date,
+                    text: m.text
+                };
+            });
+
+            const normalizedData = normalize(parsedMessages, [mensajesSchema]);
+            
+            const longAntes = JSON.stringify(mensajes).length;
+            const longDespues = JSON.stringify(normalizedData).length;
+
+            const compresion = Math.round((longAntes - longDespues) /  longAntes * 100);
+
+            socket.emit('nuevoMensaje', {normalizedData, compresion});
         }
     });
 });

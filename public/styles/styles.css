@@ -237,3 +237,8 @@ a {
 .chat__container em {
     color: #729B79;
 }
+
+.chat__container #chat__container-chatlog {
+    max-height: 400px;
+    overflow-y: scroll;
+}
